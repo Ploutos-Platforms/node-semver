@@ -7,13 +7,26 @@ const gt = require('../functions/gt')
 const minVersion = (range, loose) => {
   range = new Range(range, loose)
 
-  let minver = new SemVer('0.0.0')
+  let minver = new SemVer('0.0.0-0')
   if (range.test(minver)) {
     return minver
   }
 
-  minver = new SemVer('0.0.0-0')
+  minver = new SemVer('0.0.0')
   if (range.test(minver)) {
+    for (let i = 0; i < range.set.length; ++i) {
+      const comparators = range.set[i]
+      for (let j = 0; j < comparators.length; ++j) {
+        const comparator = comparators[j]
+        if ((comparator.operator === '' || comparator.operator === '>=') &&
+          comparator.semver.major === 0 &&
+          comparator.semver.minor === 0 &&
+          comparator.semver.patch === 0 &&
+          comparator.semver.prerelease.length) {
+          return new SemVer(comparator.semver.version)
+        }
+      }
+    }
     return minver
   }
 

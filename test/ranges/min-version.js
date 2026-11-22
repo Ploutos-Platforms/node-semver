@@ -79,3 +79,13 @@ test('minimum version in range tests', (t) => {
   })
   t.end()
 })
+
+test('minVersion respects 0.0.0 prerelease lower bounds (#934)', (t) => {
+  let min = minVersion('>=0.0.0-alpha <1.0.0')
+  t.equal(min && min.version, '0.0.0-alpha', 'picks prerelease lower than 0.0.0 when allowed by range')
+
+  min = minVersion('*', { includePrerelease: true })
+  t.equal(min && min.version, '0.0.0-0', 'with includePrerelease, * starts at 0.0.0-0')
+
+  t.end()
+})
